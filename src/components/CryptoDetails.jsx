@@ -5,7 +5,7 @@ import millify from 'millify';
 import { Col, Row, Typography, Select } from 'antd';
 import { MoneyCollectOutlined, DollarCircleOutlined, FundOutlined, ExclamationCircleOutlined, StopOutlined, TrophyOutlined, CheckOutlined, NumberOutlined, ThunderboltOutlined } from '@ant-design/icons';
 
-import { useGetCryptoDetailsQuery, useGetCryptoHistoryQuery } from '../services/cryptoApi';
+import { useGetCryptoDetailsQuery , useGetCryptoHistoryQuery } from '../services/cryptoApi';
 import Loader from './Loader';
 import LineChart from './LineChart';
 
@@ -19,7 +19,8 @@ const CryptoDetails = () => {
   const {coinId} = useParams();
   const [timePeriod , setTimePeriod] = useState('7d');
   const { data , isFetching } = useGetCryptoDetailsQuery(coinId);
-  console.log(data)
+  const { data : coinHistory } = useGetCryptoHistoryQuery({coinId , timePeriod});
+  // console.log(data)
 
   const cryptoDetails = data?.data?.coin ;
 
@@ -61,7 +62,7 @@ const CryptoDetails = () => {
           {time.map((date) => <Option key={date}>{date}</Option>)}
         </Select>
 
-        {/* lineChart  */}
+        <LineChart coinHistory={coinHistory} currentPrice={millify(cryptoDetails.price)} coinName={cryptoDetails.name} />
 
         <Col className='stats-container'>
           <Col className='coin-value-statistics'>
@@ -110,10 +111,25 @@ const CryptoDetails = () => {
         <Col className='coin-desc-link'>
             <Row className='coin-desc'>
               <Title level={3} className='coin-details-heading'>
-                What is {cryptoDetails.name}
+                What is {cryptoDetails.name} ? 
                 {HTMLReactParser(cryptoDetails.description)}
               </Title>
             </Row>
+            <Col className='coin-links'>
+              <Title className='coin-details-heading' level={3}>
+                {cryptoDetails.name} Links
+              </Title>
+              {cryptoDetails.links.map((link) => (
+                <Row className='coin-link' key={link.name}> 
+                  <Title level={5} className='link-name'>
+                    {link.type}
+                  </Title>
+                  <a href={link.url} target='_blank' rel='noreferrer'>
+                  {link.name}
+                  </a>
+                </Row>
+              ))}
+            </Col>
         </Col>
       </Col>
     </>
