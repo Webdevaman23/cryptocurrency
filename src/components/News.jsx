@@ -4,6 +4,7 @@ import moment from "moment";
 import demoImage from "../images/demoImage.png"
 import { useGetCryptoNewsQuery } from "../services/cryptoNewsApi"
 import { useGetCryptosQuery } from '../services/cryptoApi';
+import Loader from './Loader';
 
 const { Text , Title} = Typography ;
 const { Option } = Select ;
@@ -14,7 +15,7 @@ const { data : cryptoNews , isError} = useGetCryptoNewsQuery({count : simplified
 
 const { data } = useGetCryptosQuery(100);
 
-if(!cryptoNews?.data) return 'Loading...'
+if(!cryptoNews?.data) return <Loader />
 
   if (isError) {
     return "Error fetching data. Please check console for details";
